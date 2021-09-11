@@ -63,8 +63,9 @@ export default function FarmUI(props) {
   const totalDeposits = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "totalDeposits", []);
   const shareBalance = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "balanceOf", [address]);
   const approvedShares = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "allowance", [address, farmAddress]);
-
-
+  const underlyingTokensPerShare = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [BigInt(1000000000000000000)]);
+  const usersUnderlyingTokensAvailable = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [shareBalance]);
+console.log(`user shares ${usersUnderlyingTokensAvailable}`);
   const [loading, setLoading] = React.useState(true);
   const [visible, setVisible] = React.useState(false);
   const [writeLoading, setWriteLoading] = React.useState(false);
@@ -311,6 +312,8 @@ export default function FarmUI(props) {
               Stake your $NYAN for ${name ? name : ""} in Arbi to let them compound automatically!
               <hr />
               TVL: {parseFloat(formatEther(totalDeposits ? totalDeposits : "0")).toFixed(3)} {showSymbol()}
+              
+              <p>1 {showShareSymbol()} : {parseFloat(formatEther(underlyingTokensPerShare ? underlyingTokensPerShare : "0")).toFixed(3)} {showSymbol()}</p>
               <br />
               <div style={{ border: "1px solid black", margin: "5px", padding: "5px" }}>
                 <h3>Deposit</h3>
@@ -354,6 +357,19 @@ export default function FarmUI(props) {
                 />
                 <Input value={amountToWithdraw} onChange={e => setAmountToWithdraw(e.target.value)} />
                 <Button style={{margin: "3px", padding: "3px" }} onClick={() => handleWithdraw()}>{isApproved() ? "Withdraw" : "Approve"}</Button>
+                <Hint
+                  hint={
+                    <span>
+                      Get Back:{" "}
+                      <span
+                        style={{ fontWeight: "bold" }}
+                      >
+                        {formatEther(usersUnderlyingTokensAvailable ? usersUnderlyingTokensAvailable : "0")}
+                      </span>
+                      {showSymbol()}
+                    </span>
+                  }
+                />
               </div>
 
               <div style={{ border: "1px solid black", margin: "5px", padding: "5px" }}>
