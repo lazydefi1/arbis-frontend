@@ -427,26 +427,8 @@ function App(props) {
             Home
           </Link>
         </Menu.Item>
-        <Menu.Item key="https://twitter.com/arbis_finance">
-          <Link
-            onClick={() => {
-              window.location = "https://twitter.com/arbis_finance";
-            }}
-          >
-            Twitter
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="https://discord.gg/VkCZUUKmKN">
-          <Link
-            onClick={() => {
-              window.location = "https://discord.gg/VkCZUUKmKN";
-            }}
-          >
-            Community
-          </Link>
-        </Menu.Item>
+
       </Menu>
-      
 
         <Switch>
           <Route exact path="/">
@@ -500,7 +482,8 @@ function App(props) {
         <br/>
         {/* footer */}
        {/*  <p>2021 🐧 <a href="twitter.com/0xPuffin">0xPuffin</a></p> */}
-        <p><a href="https://twitter.com/arbis_finance">Twitter</a> | <a href="https://discord.gg/VkCZUUKmKN">Discord</a> | <a href="https://github.com/Arbi-s">Github</a></p>
+      <p><a href="https://twitter.com/arbis_finance" target="_blank" rel="noopener noreferrer">Twitter</a> | <a href="https://discord.gg/VkCZUUKmKN" target="_blank" rel="noopener noreferrer">Discord</a> | <a href="https://github.com/Arbi-s" target="_blank" rel="noopener noreferrer">Github</a></p>
+
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
