@@ -36,6 +36,8 @@ import ReactMarkdown from "react-markdown";
 import NyanStrategyAddress from "../contracts/NyanStrategy.address";
 import NyanStrategyAbi from "../contracts/NyanStrategy.abi";
 import ERC20Abi from "../contracts/ERC20.abi";
+import NyanRewardsContractAbi from "../contracts/NyanRewardsContract.abi";
+import { BigNumber } from "@ethersproject/bignumber";
 const ipfsClient = createIPFSClient("https://ipfs.infura.io:5001");
 const { Option } = Select;
 const { TextArea } = Input;
@@ -48,6 +50,14 @@ export default function FarmUI(props) {
   const farmAddress = NyanStrategyAddress;
   const farmInstance = useExternalContractLoader(injectedProvider, farmAddress, NyanStrategyAbi);
   const tokenAddress = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getUnderlying", []);
+
+  ///nyan specific code that wont work for other farms yet
+  //const stakingContractAddress = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "stakingContract", []);
+  //const stakingContactInstance = useExternalContractLoader(injectedProvider, stakingContractAddress, NyanRewardsContractAbi);
+  //const totalAvailableToCompound = useContractReader({ NyanRewards: stakingContactInstance }, "NyanRewards", "userRewards", [farmAddress]);
+  //const compoundingReward = totalAvailableToCompound ? BigNumber.from(totalAvailableToCompound).div(200): 0;
+  //console.log(`totalAvailableToCompound ${totalAvailableToCompound} compounding reward ${compoundingReward}`);
+  ///end of specific code that wont work for other farms yet
 
   const tokenInstance = useExternalContractLoader(injectedProvider, tokenAddress, ERC20Abi);
 
@@ -65,7 +75,7 @@ export default function FarmUI(props) {
   const approvedShares = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "allowance", [address, farmAddress]);
   const underlyingTokensPerShare = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [BigInt(1000000000000000000)]);
   const usersUnderlyingTokensAvailable = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [shareBalance]);
-console.log(`user shares ${usersUnderlyingTokensAvailable}`);
+
   const [loading, setLoading] = React.useState(true);
   const [visible, setVisible] = React.useState(false);
   const [writeLoading, setWriteLoading] = React.useState(false);
