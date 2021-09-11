@@ -385,7 +385,7 @@ export default function FarmUI(props) {
             <Footer>
               <hr />
 
-              <a href={`https://arbiscan.io/address/${farmAddress}`}>
+              <a href={`https://arbiscan.io/address/${farmAddress}`} target="_blank" rel="noopener noreferrer">
                 {" "}
                 <Hint hint={<>{truncateString(`${farmAddress}`, 8)}</>} />
               </a>
