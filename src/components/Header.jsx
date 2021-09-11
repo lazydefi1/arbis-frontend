@@ -1,5 +1,6 @@
 import { PageHeader } from "antd";
 import React from "react";
+import header_styles from "../header.css"
 
 // displays a page header
 
@@ -8,11 +9,12 @@ export default function Header() {
     <a href="https://arbis.finance" target="_blank" rel="noopener noreferrer">
       <PageHeader
         avatar={{
-          src:"/logo512.png"
+          src:"/logoredesign3clearbackground.png"
         }}
-        title="Arbi's"
-        subTitle="We have the yields"
-        style={{ cursor: "pointer" }}
+        title=""
+        subTitle="We have the yields!"
+        style={header_styles}
+        className= {header_styles}
       />
     </a>
   );
