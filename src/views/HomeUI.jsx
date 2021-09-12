@@ -31,6 +31,7 @@ import NyanStrategyAddress from "../contracts/NyanStrategy.address";
 import NyanETHStrategyAddress from "../contracts/NyanETHStrategy.address";
 import FarmNYANETHUI from "./FarmNYANETHUI";
 import CarbonStrategyAddress from "../contracts/CarbonStrategy.address";
+import PongStrategyAddress from "../contracts/PongStrategy.address";
 const ipfsClient = createIPFSClient("https://ipfs.infura.io:5001");
 const { Option } = Select;
 const { TextArea } = Input;
@@ -39,6 +40,13 @@ const { RangePicker } = DatePicker;
 function Required() {
   return <span style={{ color: "red" }}>*</span>;
 }
+
+const farms = [
+  "NYANSTRATEGY",
+  "NYANETHSTRATEGY",
+  "CARBONSTRATEGY",
+  "PONGSTRATEGY"
+];
 
 export default function CreateUI({
   setPurposeEvents,
@@ -53,6 +61,7 @@ export default function CreateUI({
   injectedProvider,
 }) {
   const [loading, setLoading] = useState(true);
+  const [currentFarm, setCurrentFarm] = useState("NYANSTRATEGY");
   const inUseProvider = injectedProvider;
   const instance = useExternalContractLoader(inUseProvider, FarmListAddress, FarmListAbi);
   const farm0 = useContractReader({ FarmList: instance }, "FarmList", "farms", [BigInt(0)]);
@@ -89,6 +98,50 @@ export default function CreateUI({
     }
   }, [injectedProvider]);
 
+  function showFarm() {
+    if (currentFarm == farms[0]) {
+      return <FarmUI
+        address={address}
+        userSigner={userSigner}
+        provider={localProvider}
+        injectedProvider={injectedProvider}
+        tx={tx}
+        farmAddress={NyanStrategyAddress}
+        farmName={"Nyan Strategy"}
+      />
+    } else if (currentFarm == farms[1]) {
+      return <FarmNYANETHUI
+        address={address}
+        userSigner={userSigner}
+        provider={localProvider}
+        injectedProvider={injectedProvider}
+        tx={tx}
+        farmAddress={NyanETHStrategyAddress}
+        farmName={"Nyan-ETH Strategy"}
+      />
+    } else if (currentFarm == farms[2]) {
+      return <FarmUI
+        address={address}
+        userSigner={userSigner}
+        provider={localProvider}
+        injectedProvider={injectedProvider}
+        tx={tx}
+        farmAddress={CarbonStrategyAddress}
+        farmName={"Carbon Strategy"}
+      />
+    } else {
+      return <FarmUI
+        address={address}
+        userSigner={userSigner}
+        provider={localProvider}
+        injectedProvider={injectedProvider}
+        tx={tx}
+        farmAddress={PongStrategyAddress}
+        farmName={"Pong Strategy"}
+      />
+    }
+  }
+
   return (
     <div>
       {loading ? (
@@ -99,68 +152,46 @@ export default function CreateUI({
         </div>
       ) : (
         <>
-        <FarmUI
-        address={address}
-        userSigner={userSigner}
-        provider={localProvider}
-        injectedProvider={injectedProvider}
-        tx={tx}
-        farmAddress={NyanStrategyAddress}
-        farmName={"Nyan Strategy"}
-        />
-        <br/>
-        <br/>
-        <br/>
-        <FarmNYANETHUI
-        address={address}
-        userSigner={userSigner}
-        provider={localProvider}
-        injectedProvider={injectedProvider}
-        tx={tx}
-        farmAddress={NyanETHStrategyAddress}
-        farmName={"Nyan-ETH Strategy"}
-        />
-        <br/>
-        <br/>
-        <br/>
-        <FarmUI
-        address={address}
-        userSigner={userSigner}
-        provider={localProvider}
-        injectedProvider={injectedProvider}
-        tx={tx}
-        farmAddress={CarbonStrategyAddress}
-        farmName={"Carbon Strategy"}
-        />
+          <div>
+            Select Farm:
+            <br />
+            <Button onClick={() => setCurrentFarm(farms[0])}>{farms[0]}</Button>
+            <Button onClick={() => setCurrentFarm(farms[1])}>{farms[1]}</Button>
+            <Button onClick={() => setCurrentFarm(farms[2])}>{farms[2]}</Button>
+            <Button onClick={() => setCurrentFarm(farms[3])}>{farms[3]}</Button>
+          </div>
+          <br />
+          {showFarm()}
+
         </>
-       /*  <Space direction="horizontal">
-          <Card
-            title={"NyanStrategy"}
-            style={{ width: "300", cursor: "pointer" }}
-            onClick={() => {
-              window.location = window.location + "f/" + NyanStrategyAddress;
-            }}
-          >
-            <Hint hint={<span>{`Farm #1`}</span>} />
-            <br />
-              <div>
-                <Image width={300} height={300} src={"https://i.imgur.com/rc5GSam.png"} />
-                <br />
-                <p>{truncateString("First fair launch token on Arbitrum", 20)}</p>
-              </div>
-            <br />
-            <a href={`https://arbiscan.io/address/${NyanStrategyAddress}`}>
-              {" "}
-              <Hint hint={<span>{truncateString(`${NyanStrategyAddress}`, 8)}</span>} />
-            </a>
-            <hr />
-            <b>
-              APY: <i>Coming Soon</i>
-            </b>
-          </Card>
-          {/* 
-            {showFarms()} *}
-        </Space> */
+        /*  <Space direction="horizontal">
+           <Card
+             title={"NyanStrategy"}
+             style={{ width: "300", cursor: "pointer" }}
+             onClick={() => {
+               window.location = window.location + "f/" + NyanStrategyAddress;
+             }}
+           >
+             <Hint hint={<span>{`Farm #1`}</span>} />
+             <br />
+               <div>
+                 <Image width={300} height={300} src={"https://i.imgur.com/rc5GSam.png"} />
+                 <br />
+                 <p>{truncateString("First fair launch token on Arbitrum", 20)}</p>
+               </div>
+             <br />
+             <a href={`https://arbiscan.io/address/${NyanStrategyAddress}`}>
+               {" "}
+               <Hint hint={<span>{truncateString(`${NyanStrategyAddress}`, 8)}</span>} />
+             </a>
+             <hr />
+             <b>
+               APY: <i>Coming Soon</i>
+             </b>
+           </Card>
+           {/* 
+             {showFarms()} *}
+         </Space> */
       )}
     </div>
   );
