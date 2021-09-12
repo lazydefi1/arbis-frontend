@@ -44,7 +44,7 @@ const { RangePicker } = DatePicker;
 
 export default function FarmUI(props) {
   //props{match.params, provider, userSigner, address, tx}
-  const { provider, userSigner, address, tx, injectedProvider, farmAddress, farmName } = props;
+  const { provider, userSigner, address, tx, injectedProvider, farmAddress, farmName, stakingPoolAddress } = props;
   //const { farmAddress } = useParams();
   const farmInstance = useExternalContractLoader(injectedProvider, farmAddress, NyanStrategyAbi);
   const tokenAddress = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getUnderlying", []);
@@ -73,6 +73,10 @@ export default function FarmUI(props) {
   const approvedShares = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "allowance", [address, farmAddress]);
   const underlyingTokensPerShare = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [BigInt(1000000000000000000)]);
   const usersUnderlyingTokensAvailable = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [shareBalance]);
+
+  const stakingPoolInstance = useExternalContractLoader(injectedProvider, stakingPoolAddress, NyanRewardsContractAbi);
+  const rewardRate = useContractReader({ NyanRewards: stakingPoolInstance }, "NyanRewards", "rewardRate"); 
+  const totalSupply = useContractReader({ NyanRewards: stakingPoolInstance }, "NyanRewards", "totalSupply"); 
 
   const [loading, setLoading] = React.useState(true);
   const [visible, setVisible] = React.useState(false);
@@ -296,6 +300,14 @@ export default function FarmUI(props) {
     return " $" + (symbol ? symbol : "");
   }
 
+  const SECONDS_PER_YEAR = 365.25 * 24 * 60 * 60;
+  //const BLOCKS_IN_A_YEAR = SECONDS_PER_YEAR / 14;
+
+  /* `rewardRate` is the reward emitted per sec */
+  const apr = () => 100* parseFloat(formatEther(rewardRate)) * SECONDS_PER_YEAR / parseFloat(formatEther(totalSupply)); 
+  /* https://gist.github.com/sterlu/4b44f59ea665819974ae684d7f564d9b */
+  const aprToApy = (interest, frequency = 12) => ((1 + (interest / 100) / frequency) ** frequency - 1) * 100;
+
   return (
     <div>
       {loading ? (
@@ -322,6 +334,11 @@ export default function FarmUI(props) {
                 {" "}
                 <Hint hint={<>{truncateString(`${farmAddress}`, 8)}</>} />
               </a>
+              {
+                rewardRate && totalSupply && (
+                  <h2>APY: {(aprToApy(apr())).toFixed(0)}%</h2>
+                ) 
+              }
               Stake your {showSymbol()} for ${name ? name : ""} in Arbi to let them compound automatically!
               <hr />
               TVL: {parseFloat(formatEther(totalDeposits ? totalDeposits : "0")).toFixed(3)} {showSymbol()}

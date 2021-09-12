@@ -32,6 +32,12 @@ import NyanETHStrategyAddress from "../contracts/NyanETHStrategy.address";
 import FarmNYANETHUI from "./FarmNYANETHUI";
 import CarbonStrategyAddress from "../contracts/CarbonStrategy.address";
 import PongStrategyAddress from "../contracts/PongStrategy.address";
+
+import NyanStakingPoolAddress from "../contracts/NyanStakingPool.address";
+import NyanETHStakingPoolAddress from "../contracts/NyanETHStakingPool.address";
+import CarbonStakingPoolAddress from "../contracts/CarbonStakingPool.address";
+import PongStakingPoolAddress from "../contracts/PongStakingPool.address";
+
 const ipfsClient = createIPFSClient("https://ipfs.infura.io:5001");
 const { Option } = Select;
 const { TextArea } = Input;
@@ -46,6 +52,13 @@ const farms = [
   "NYANETHSTRATEGY",
   "CARBONSTRATEGY",
   "PONGSTRATEGY"
+];
+
+const stakingPoolAddresses = [
+  NyanStakingPoolAddress,
+  NyanETHStakingPoolAddress,
+  CarbonStakingPoolAddress,
+  PongStakingPoolAddress, 
 ];
 
 export default function CreateUI({
@@ -66,9 +79,6 @@ export default function CreateUI({
   const instance = useExternalContractLoader(inUseProvider, FarmListAddress, FarmListAbi);
   const farm0 = useContractReader({ FarmList: instance }, "FarmList", "farms", [BigInt(0)]);
   const raiseCount = 0;
-  if (farm0) {
-    console.log(farm0);
-  }
 
   function showFarms() {
     let cur = raiseCount - 1;
@@ -108,6 +118,7 @@ export default function CreateUI({
         tx={tx}
         farmAddress={NyanStrategyAddress}
         farmName={"Nyan Strategy"}
+        stakingPoolAddress={stakingPoolAddresses[0]}
       />
     } else if (currentFarm == farms[1]) {
       return <FarmNYANETHUI
@@ -118,6 +129,7 @@ export default function CreateUI({
         tx={tx}
         farmAddress={NyanETHStrategyAddress}
         farmName={"Nyan-ETH Strategy"}
+        stakingPoolAddress={stakingPoolAddresses[1]}
       />
     } else if (currentFarm == farms[2]) {
       return <FarmUI
@@ -128,6 +140,7 @@ export default function CreateUI({
         tx={tx}
         farmAddress={CarbonStrategyAddress}
         farmName={"Carbon Strategy"}
+        stakingPoolAddress={stakingPoolAddresses[2]}
       />
     } else {
       return <FarmUI
@@ -138,6 +151,7 @@ export default function CreateUI({
         tx={tx}
         farmAddress={PongStrategyAddress}
         farmName={"Pong Strategy"}
+        stakingPoolAddress={stakingPoolAddresses[3]}
       />
     }
   }

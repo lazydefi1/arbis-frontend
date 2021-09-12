@@ -73,7 +73,7 @@ export default function FarmNYANETHUI(props) {
   const approvedShares = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "allowance", [address, farmAddress]);
   const underlyingTokensPerShare = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "getDepositTokensForShares", [BigInt(1000000000000000000)]);
   const usersUnderlyingTokensAvailable = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "getDepositTokensForShares", [shareBalance]);
-  console.log(`underlying per share ${underlyingTokensPerShare}`);
+  //console.log(`underlying per share ${underlyingTokensPerShare}`);
   const [loading, setLoading] = React.useState(true);
   const [visible, setVisible] = React.useState(false);
   const [writeLoading, setWriteLoading] = React.useState(false);
