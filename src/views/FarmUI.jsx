@@ -308,10 +308,10 @@ export default function FarmUI(props) {
       ) : (
         <div>
           <Layout>
-            <Header>
-              <h1 style={{ fontSize: "x-large" }}>{name ? name : <Spin />}</h1>
-              <br />
-            </Header>
+            {/* <Header> */}
+            {/*   <h1 style={{ fontSize: "x-large" }}>{name ? name : <Spin />}</h1> */}
+            {/*   <br /> */}
+            {/* </Header> */}
             <Content style={{
     minWidth: "15em",
     width: "30em",
@@ -343,8 +343,8 @@ export default function FarmUI(props) {
                     </span>
                   }
                 />
-                <Input value={amountToDeposit} onChange={e => setAmountToDeposit(e.target.value)} />
-                <Button style={{margin: "3px", padding: "3px" }} onClick={() => handleInvest()}>{isApproved() ? "Stake" : "Approve"}</Button>
+                <Input style={{ width: "90%" }} value={amountToDeposit} onChange={e => setAmountToDeposit(e.target.value)} />
+                <Button style={{margin: "3px", padding: "0px 10px" }} onClick={() => handleInvest()}>{isApproved() ? "Stake" : "Approve"}</Button>
               </div>
 
               <div style={{ border: "1px solid black", margin: "5px", padding: "5px" }}>
@@ -365,8 +365,8 @@ export default function FarmUI(props) {
                     </span>
                   }
                 />
-                <Input value={amountToWithdraw} onChange={e => setAmountToWithdraw(e.target.value)} />
-                <Button style={{margin: "3px", padding: "3px" }} onClick={() => handleWithdraw()}>{isApproved() ? "Withdraw" : "Approve"}</Button>
+                <Input style={{ width: "90%" }} value={amountToWithdraw} onChange={e => setAmountToWithdraw(e.target.value)} />
+                <Button style={{margin: "3px", padding: "0px 10px" }} onClick={() => handleWithdraw()}>{isApproved() ? "Withdraw" : "Approve"}</Button>
                 <Hint
                   hint={
                     <span>
