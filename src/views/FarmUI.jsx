@@ -308,10 +308,10 @@ export default function FarmUI(props) {
       ) : (
         <div>
           <Layout>
-            <Header>
-              <h1 style={{ fontSize: "x-large" }}>{name ? name : <Spin />}</h1>
-              <br />
-            </Header>
+            {/* <Header> */}
+            {/*   <h1 style={{ fontSize: "x-large" }}>{name ? name : <Spin />}</h1> */}
+            {/*   <br /> */}
+            {/* </Header> */}
             <Content style={{
     minWidth: "15em",
     width: "30em",
