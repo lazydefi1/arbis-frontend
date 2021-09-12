@@ -33,7 +33,7 @@ import { useExternalContractLoader, useContractReader, useBalance } from "../hoo
 import { useParams } from "react-router-dom";
 import { create as createIPFSClient } from "ipfs-http-client";
 import ReactMarkdown from "react-markdown";
-import NyanStrategyAbi from "../contracts/NyanStrategy.abi";
+import NyanETHStrategyAbi from "../contracts/NyanETHStrategy.abi";
 import ERC20Abi from "../contracts/ERC20.abi";
 import NyanRewardsContractAbi from "../contracts/NyanRewardsContract.abi";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -42,12 +42,12 @@ const { Option } = Select;
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
-export default function FarmUI(props) {
+export default function FarmNYANETHUI(props) {
   //props{match.params, provider, userSigner, address, tx}
   const { provider, userSigner, address, tx, injectedProvider, farmAddress, farmName } = props;
   //const { farmAddress } = useParams();
-  const farmInstance = useExternalContractLoader(injectedProvider, farmAddress, NyanStrategyAbi);
-  const tokenAddress = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getUnderlying", []);
+  const farmInstance = useExternalContractLoader(injectedProvider, farmAddress, NyanETHStrategyAbi);
+  const tokenAddress = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "depositToken", []);
 
   ///nyan specific code that wont work for other farms yet
   //const stakingContractAddress = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "stakingContract", []);
@@ -66,14 +66,14 @@ export default function FarmUI(props) {
 
   const approved = useContractReader({ ERC20: tokenInstance }, "ERC20", "allowance", [address, farmAddress]);
 
-  const name = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getName", []);
-  const symbol = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "symbol", []);
-  const totalDeposits = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "totalDeposits", []);
-  const shareBalance = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "balanceOf", [address]);
-  const approvedShares = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "allowance", [address, farmAddress]);
-  const underlyingTokensPerShare = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [BigInt(1000000000000000000)]);
-  const usersUnderlyingTokensAvailable = useContractReader({ NyanStrategy: farmInstance }, "NyanStrategy", "getTokensPerShare", [shareBalance]);
-
+  const name = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "name", []);
+  const symbol = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "symbol", []);
+  const totalDeposits = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "totalDeposits", []);
+  const shareBalance = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "balanceOf", [address]);
+  const approvedShares = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "allowance", [address, farmAddress]);
+  const underlyingTokensPerShare = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "getDepositTokensForShares", [BigInt(1000000000000000000)]);
+  const usersUnderlyingTokensAvailable = useContractReader({ NYANETHStrategy: farmInstance }, "NYANETHStrategy", "getDepositTokensForShares", [shareBalance]);
+  console.log(`underlying per share ${underlyingTokensPerShare}`);
   const [loading, setLoading] = React.useState(true);
   const [visible, setVisible] = React.useState(false);
   const [writeLoading, setWriteLoading] = React.useState(false);
@@ -188,106 +188,6 @@ export default function FarmUI(props) {
 
     return true;
   }
-  /*const [loadedData, setLoadedData] = React.useState(false);
-  const [ethToSpend, setEthToSpend] = React.useState("0.1");
-  const [toReceive, setToReceive] = React.useState("0");
-
-  console.log(`loaded address ${raiseAddress}`);
-  //step 2 create raise instance
-  const raiseInstance = useExternalContractLoader(props.provider, raiseAddress, RaiseAbi);
-  //step 3 use instance to get data
-  const raiseData = useContractReader({ Raise: raiseInstance }, "Raise", "data", []);
-  const raiseName = useContractReader({ Raise: raiseInstance }, "Raise", "name", []);
-  const raiseSymbol = useContractReader({ Raise: raiseInstance }, "Raise", "symbol", []);
-  const raiseEnd = useContractReader({ Raise: raiseInstance }, "Raise", "endTime", []);
-  const totalRaised = useContractReader({ Raise: raiseInstance }, "Raise", "totalRaised", []);
-  const okToApe = useContractReader({ Raise: raiseInstance }, "Raise", "okToApe", [address]);
-  const totalSupply = useContractReader({ Raise: raiseInstance }, "Raise", "totalSupply", []);
-  const pricingContractAddress = useContractReader({ Raise: raiseInstance }, "Raise", "pricing", []);
-
-  console.log(`ok to ape ${okToApe}`);
-
-  const pricingInstance = useExternalContractLoader(props.provider, pricingContractAddress, OneToOnePricingAbi);
-  let maxRaise;
-  console.log(pricingContractAddress);
-  if (raiseData) {
-    maxRaise = raiseData[1]
-    document.title = raiseName;
-  }
-  console.log(`raise data ${pricingContractAddress} pricing contract address ${totalRaised} totalRaised ${maxRaise} maxRaise`);
-  console.log(raiseData);
-
-  async function loadRaiseData() {
-    setLoading(true);
-    try {
-
-      var d = await axios.get(raiseData[2]);
-      console.log(`axios got data`);
-      console.log(d);
-      setLoadedData(d.data);
-    } catch (e) {
-      console.log(e);
-    }
-    setLoading(false);
-  }
-
-  React.useEffect(() => {
-    if (raiseData != undefined && !loading) {
-      loadRaiseData();
-    }
-
-    if (parseFloat(ethToSpend) && pricingInstance) {
-      updateToReceive();
-    }
-  }, [raiseData, ethToSpend]);
-
-  async function updateToReceive() {
-    setToReceive(await pricingInstance.viewNextPrice(parseEther(ethToSpend != "" ? ethToSpend : "0"), totalSupply));
-  }
-
-
-  function isOpen(raiseData, raiseEnd) {
-    if (raiseData && raiseEnd) {
-      const r = relationToNow(raiseData[4], raiseEnd);
-      if (r.includes("Closing in")) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    return false;
-  }
-
-
-  async function handleInvest() {
-    setWriteLoading(true);
-    const data = raiseInstance.interface.encodeFunctionData("apeIn", []);
-
-    //replace with
-    //  pricingStrategy address 
-    tx(
-
-      userSigner.sendTransaction({
-        to: raiseAddress,
-        data: data,
-        value: parseEther(ethToSpend),
-      }),
-    );
-    setTimeout(() => {
-      setVisible(false);
-      setWriteLoading(false);
-    }, 2000);
-  };
-
-  const handleCancel = () => {
-    console.log('Clicked cancel button');
-    setVisible(false);
-  };
-
-
-  const backgroundColor = "lightgrey"
-  const color = "black"; */
-
   function showSymbol() {
     return " $" + (underlyingSymbol ? underlyingSymbol : "");
   }
@@ -322,7 +222,7 @@ export default function FarmUI(props) {
                 {" "}
                 <Hint hint={<>{truncateString(`${farmAddress}`, 8)}</>} />
               </a>
-              Stake your {showSymbol()} for ${name ? name : ""} in Arbi to let them compound automatically!
+              Stake your NYAN/ETH  $SLP Tokens for {showShareSymbol() ? showShareSymbol() : ""} in Arbi to let them compound automatically!
               <hr />
               TVL: {parseFloat(formatEther(totalDeposits ? totalDeposits : "0")).toFixed(3)} {showSymbol()}
               

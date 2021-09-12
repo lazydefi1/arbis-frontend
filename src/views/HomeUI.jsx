@@ -28,6 +28,9 @@ import FarmListAddress from "../contracts/FarmList.address";
 import FarmListAbi from "../contracts/FarmList.abi";
 import Strategy from "../contracts/Strategy.abi";
 import NyanStrategyAddress from "../contracts/NyanStrategy.address";
+import NyanETHStrategyAddress from "../contracts/NyanETHStrategy.address";
+import FarmNYANETHUI from "./FarmNYANETHUI";
+import CarbonStrategyAddress from "../contracts/CarbonStrategy.address";
 const ipfsClient = createIPFSClient("https://ipfs.infura.io:5001");
 const { Option } = Select;
 const { TextArea } = Input;
@@ -95,13 +98,41 @@ export default function CreateUI({
           <h4>Connect wallet to use this app</h4>
         </div>
       ) : (
+        <>
         <FarmUI
         address={address}
         userSigner={userSigner}
         provider={localProvider}
         injectedProvider={injectedProvider}
         tx={tx}
+        farmAddress={NyanStrategyAddress}
+        farmName={"Nyan Strategy"}
         />
+        <br/>
+        <br/>
+        <br/>
+        <FarmNYANETHUI
+        address={address}
+        userSigner={userSigner}
+        provider={localProvider}
+        injectedProvider={injectedProvider}
+        tx={tx}
+        farmAddress={NyanETHStrategyAddress}
+        farmName={"Nyan-ETH Strategy"}
+        />
+        <br/>
+        <br/>
+        <br/>
+        <FarmUI
+        address={address}
+        userSigner={userSigner}
+        provider={localProvider}
+        injectedProvider={injectedProvider}
+        tx={tx}
+        farmAddress={CarbonStrategyAddress}
+        farmName={"Carbon Strategy"}
+        />
+        </>
        /*  <Space direction="horizontal">
           <Card
             title={"NyanStrategy"}
